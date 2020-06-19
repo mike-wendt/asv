@@ -437,6 +437,11 @@ $(document).ready(function() {
         return rev;
     }
 
+    function get_requirements(commit_hash) {
+        var rev = get_revision(commit_hash);
+        return master_json.revision_to_requirements[rev];
+    }
+
     function init_index() {
         /* Fetch the master index.json and then set up the page elements
            based on it. */
@@ -502,6 +507,7 @@ $(document).ready(function() {
     this.load_graph_data = load_graph_data;
     this.get_commit_hash = get_commit_hash;
     this.get_revision = get_revision;
+    this.get_requirements = get_requirements;
 
     this.master_timestamp = master_timestamp; /* Updated after info.json loads */
     this.master_json = master_json; /* Updated after index.json loads */
