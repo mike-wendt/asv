@@ -138,8 +138,10 @@ class Publish(Command):
         with log.indent():
             # Determine first the set of all parameters and all commits
             hash_to_date = {}
+            hash_to_requirements = {}
             for results in cls.iter_results(conf, repo, range_spec):
                 hash_to_date[results.commit_hash] = results.date
+                hash_to_requirements[results.commit_hash] = results._requirements
                 for key, val in six.iteritems(results.params):
                     if val is None:
                         # Backward compatibility -- null means ''
@@ -157,6 +159,8 @@ class Publish(Command):
                 # Map to revision number instead of commit hash and add tags to hash_to_date
                 tags[tag] = revisions[tags[tag]]
                 hash_to_date[commit_hash] = repo.get_date_from_name(commit_hash)
+                if commit_hash not in hash_to_requirements.keys():
+                    hash_to_requirements[commit_hash] = {}
 
             revision_to_date = dict((r, hash_to_date[h]) for h, r in six.iteritems(revisions))
 
@@ -257,6 +261,7 @@ class Publish(Command):
             params[key] = val
         params['branch'] = [repo.get_branch_name(branch) for branch in conf.branches]
         revision_to_hash = dict((r, h) for h, r in six.iteritems(revisions))
+        revision_to_requirements = dict((r, hash_to_requirements[h]) for h, r in six.iteritems(revisions))
         util.write_json(os.path.join(conf.html_dir, "index.json"), {
             'project': conf.project,
             'project_url': conf.project_url,
@@ -264,6 +269,7 @@ class Publish(Command):
             'hash_length': conf.hash_length,
             'revision_to_hash': revision_to_hash,
             'revision_to_date': revision_to_date,
+            'revision_to_requirements': revision_to_requirements,
             'params': params,
             'graph_param_list': graph_param_list,
             'benchmarks': benchmark_map,
