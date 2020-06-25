@@ -1,4 +1,4 @@
-{% set name = "asv" %}
+{% set name = "gpuci-asv" %}
 {% set version = "0.4.3dev" %}
 
 package:
