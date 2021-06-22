@@ -298,11 +298,20 @@ $(document).ready(function() {
                     previous_hover = item.datapoint;
                     var y = item.datapoint[1];
                     var commit_hash = get_commit_hash(item.datapoint[0]);
+                    var requirements = $.asv.get_requirements(commit_hash);
+                    var req_text = "";
+                    if (requirements == {}) {
+                        req_text = "No requirements data";
+                    } else {
+                        for (var req in requirements) {
+                            req_text += req+" ["+requirements[req]+"]<br>"
+                        }
+                    }
                     if (commit_hash) {
                         var unit = $.asv.master_json.benchmarks[current_benchmark].unit;
                         showTooltip(
                             item.pageX, item.pageY,
-                            $.asv.pretty_unit(y, unit) + " @ " + commit_hash);
+                            $.asv.pretty_unit(y, unit) + " @ " + commit_hash + "<br><br>" + req_text);
                     }
                 }
             } else {
